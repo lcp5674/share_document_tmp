@@ -2,20 +2,20 @@
 [Hive Wiki](https://cwiki.apache.org/confluence/display/Hive/Home#Home-UserDocumentation)
 ## 1.1、Plan
 ![](https://gitee.com/PeterOtter/yu-que-sync-image/raw/master/20210629010356.png#align=left&display=inline&height=728&id=piJHn&margin=%5Bobject%20Object%5D&originHeight=728&originWidth=1192&status=done&style=none&width=1192)
-**大致流程：**
-	1、客户端连接到HS2(HiveServer2，目前大多数通过beeline形式连接，Hive Cli模式相对较重，且直接略过授权访问元数据),建立会话
-	2、提交sql，通过Driver进行编译、解析、优化逻辑计划，生成物理计划
-	3、对物理计划进行优化，并提交到执行引擎进行计算
-	4、返回结果
-**细节流程：**
-	1、客户端和HiveServer2建立连接，创建会话
-	2、提交查询或者DDL，转交到Driver进行处理
-	3、Driver内部会通过Parser对语句进行解析，校验语法是否正确
-	4、然后通过Compiler编译器对语句进行编译，生成AST Tree
-	5、SemanticAnalyzer会遍历AST Tree，进一步进行语义分析，这个时候会和Hive MetaStore进行通信获取Schema信息,抽象成QueryBlock，逻辑计划生成器会遍历QueryBlock，翻译成Operator（计算抽象出来的算子）生成OperatorTree,这个时候是未优化的逻辑计划
-	6、Optimizer会对逻辑计划进行优化，如进行谓词下推、常量值替换、列裁剪等操作，得到优化后的逻辑计划。
-	7、SemanticAnalyzer会对逻辑计划进行处理，通过TaskCompiler生成物理执行计划TaskTree。
-	8、TaskCompiler会对物理计划进行优化，然后根据底层不同的引擎进行提交执行。
+**大致流程：**<br>
+	&emsp;1、客户端连接到HS2(HiveServer2，目前大多数通过beeline形式连接，Hive Cli模式相对较重，且直接略过授权访问元数据),建立会话<br>
+	&emsp;2、提交sql，通过Driver进行编译、解析、优化逻辑计划，生成物理计划<br>
+	&emsp;3、对物理计划进行优化，并提交到执行引擎进行计算<br>
+	&emsp;4、返回结果<br>
+**细节流程：**<br>
+	&emsp;1、客户端和HiveServer2建立连接，创建会话<br>
+	&emsp;2、提交查询或者DDL，转交到Driver进行处理<br>
+	&emsp;3、Driver内部会通过Parser对语句进行解析，校验语法是否正确<br>
+	&emsp;4、然后通过Compiler编译器对语句进行编译，生成AST Tree<br>
+	&emsp;5、SemanticAnalyzer会遍历AST Tree，进一步进行语义分析，这个时候会和Hive MetaStore进行通信获取Schema信息,抽象成QueryBlock，逻辑计划生成器会遍历QueryBlock，翻译成Operator（计算抽象出来的算子）生成OperatorTree,这个时候是未优化的逻辑计划<br>
+	&emsp;6、Optimizer会对逻辑计划进行优化，如进行谓词下推、常量值替换、列裁剪等操作，得到优化后的逻辑计划。<br>
+	&emsp;7、SemanticAnalyzer会对逻辑计划进行处理，通过TaskCompiler生成物理执行计划TaskTree。<br>
+	&emsp;8、TaskCompiler会对物理计划进行优化，然后根据底层不同的引擎进行提交执行。<br>
 ![](https://gitee.com/PeterOtter/yu-que-sync-image/raw/master/20210629010912.png#align=left&display=inline&height=726&id=kXx26&margin=%5Bobject%20Object%5D&originHeight=726&originWidth=490&status=done&style=none&width=490)
 
 ### 1.1.1、Analyze Sql
@@ -28,16 +28,16 @@
 EXPLAIN [EXTENDED|CBO|AST|DEPENDENCY|AUTHORIZATION|LOCKS|VECTORIZATION|ANALYZE] query
 ```
 
-**版本支持：**
-	Hive0.14.0支持AUTHORIZATION；[HIVE-5961]
-	Hive2.3.0支持VECTORIZATION;[HIVE-11394]
-	Hive3.2.0支持LOCKS;[HIVE-17683]
+**版本支持：**<br>
+	&emsp;Hive0.14.0支持AUTHORIZATION；[HIVE-5961]<br>
+	&emsp;Hive2.3.0支持VECTORIZATION;[HIVE-11394]<br>
+	&emsp;Hive3.2.0支持LOCKS;[HIVE-17683]<br>
 
-Explain结果总共分为三个部分：
-	1、对应查询的抽象语法树 AST
-	2、每个计划阶段Stage之间的依赖关系
-	3、每个计划阶段的描述（可能是map/reduce,也可能是操作元数据或者文件操作）
-**聚合操作分析示例:**
+Explain结果总共分为三个部分：<br>
+	&emsp;1、对应查询的抽象语法树 AST<br>
+	&emsp;2、每个计划阶段Stage之间的依赖关系<br>
+	&emsp;3、每个计划阶段的描述（可能是map/reduce,也可能是操作元数据或者文件操作）<br>
+**聚合操作分析示例:**<br>
 
 
 ```sql
